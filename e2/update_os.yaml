@@ -1,0 +1,15 @@
+---
+- name: Update server and display output
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update the packages
+      yum:
+        name: '*'
+        state: latest
+      register: update_result
+
+    - name: Display updated output
+      debug:
+        var: update_result
+

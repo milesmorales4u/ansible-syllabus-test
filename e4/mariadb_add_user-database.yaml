@@ -1,0 +1,38 @@
+---
+- name: install mariadb server and add user and database
+  hosts: dbservers
+  become: yes
+  tasks:
+    - name: install mariadb
+      yum:
+        name: mariadb-server
+        state: latest
+
+    - name: install PyMysql
+      yum:
+        name: python3-PyMySQL
+        state: present
+
+    - name: start and enable mariadb server
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - name: create new database with name database1
+      mysql_db:
+        name: database1
+        state: present
+        login_user: root
+        login_password: ''
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+    - name:
+      mysql_user:
+        name: happyuser
+        password: "asd123."
+        host: "%"  # Allow access from any host
+        priv: "happy.*:ALL"  # Grant all privileges on the "happy" database
+        login_user: root
+        login_password: ''
+        login_unix_socket: /var/lib/mysql/mysql.sock  # Adjust the socket path as needed

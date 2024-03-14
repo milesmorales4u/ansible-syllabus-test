@@ -1,0 +1,20 @@
+---
+- name: create directory and add file inside directory
+  hosts: all
+  become: yes
+  tasks:
+    - name: create directory
+      file:
+        path: /ansible_dir
+        state: directory
+        owner: root
+        group: tss
+        mode: '700'
+
+    - name: create file inside
+      file:
+        path: /ansible_dir/helo_user
+        state: touch
+        owner: root
+        group: sshd
+        mode: '600'

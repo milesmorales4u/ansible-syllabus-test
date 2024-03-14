@@ -1,0 +1,25 @@
+---
+- name: simple task to create a user using variable directory
+  hosts: all
+  become: yes
+  gather_facts: false   #disable setup module to gather facts
+  tasks:
+    - name: create user 
+      user:
+        name: "{{user_name}}"
+        comment: "{{user_comment}}"
+        shell: "{{user_shell}}"
+      register: user_out
+
+#while executing debug we can see the all information during the creation of the user
+    - debug: 
+        var: user_out
+          #this debug display all the data regarding the user
+
+    - debug:
+        var: user_out.name
+          #only display name of the user
+
+    - debug: 
+        var: user_out.comment
+          #only display the comment of the user only

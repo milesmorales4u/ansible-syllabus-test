@@ -1,0 +1,73 @@
+---
+# tasks file for post-install
+ 
+- name: install ntp agent in Alma linux
+  yum:
+    name: "{{ item }}"
+    state: present
+  when: ansible_distribution == "AlmaLinux"
+  loop:
+    - chrony
+    - zip
+    - git
+
+- name: install ntp agent in Ubuntu server
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: no
+  when: ansible_distribution == "Ubuntu"
+  loop:
+    - ntp
+    - zip
+    - git
+
+- name: Start service in alma linux
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "AlmaLinux"
+
+- name: start and enable service
+  service:
+    name: ntp
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Banner file 
+  copy: 
+    content: '# This server is managed by ansible no manuel change please'
+    dest: /etc/motd
+
+- name: create a folder
+  file:
+    path: "{{mydir}}"
+    state: directory
+
+- name: Deploy ntp agent configuration on ALMA LINUX
+  template:
+    src: ntpconf_alma.j2
+    dest: /etc/chrony.conf
+    backup: yes
+  when: ansible_distribution == "AlmaLinux"
+  notify:
+    - Chronyd restart
+
+- name: Deploy ntp agent configuration in UBUNTU
+  template:
+    src: ntpconf_ubuntu.j2
+    dest: /etc/ntp.conf
+    backup: yes
+  when: ansible_distribution == "Ubuntu"
+
+  notify:
+    - Ntp restart
+
+
+- name: Dump file
+  copy:
+    src: files/myfile.txt
+    dest: /tmp/myfile.txt
+

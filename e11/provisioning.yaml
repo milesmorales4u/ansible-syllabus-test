@@ -1,0 +1,82 @@
+---
+- name: installing ntp agent in all server
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install ntp agent in Alma linux
+      yum:
+        name: "{{ item }}"
+        state: present
+      when: ansible_distribution == "AlmaLinux"
+      loop:
+        - chrony
+        - zip
+        - git
+
+    - name: install ntp agent in Ubuntu server
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: no
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - zip
+        - git
+
+    - name: Start service in alma linux
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: start and enable service
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+#copy a banner file to server
+    - name: Banner file 
+      copy: 
+        content: '# This server is managed by ansible no manuel change please'
+        dest: /etc/motd
+
+    - name: Deploy ntp agent configuration on ALMA LINUX
+      template:
+        src: template/ntpconf_alma
+        dest: /etc/chrony.conf
+        backup: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: Deploy ntp agent configuration in UBUNTU
+      template:
+        src: template/ntpconf_ubuntu
+        dest: /etc/ntp.conf
+        backup: yes
+      when: ansible_distribution == "Ubuntu"
+
+#whenever you change the cionfiguration must restart the service
+
+
+    - name: restart service in alma linux after edit
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: restart service in ubuntu after edit
+      service:
+        name: ntp
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+
+
+
+
+

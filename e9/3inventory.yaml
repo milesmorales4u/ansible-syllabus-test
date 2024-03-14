@@ -1,0 +1,31 @@
+#inventory file uses grouping concept, 
+#If the login private key and user is same we no need to define in host level 
+#It is better to define in group level  
+
+all:
+  hosts:      #host level
+    web1:
+      ansible_host: 172.16.50.20
+    ubuntu_web2:
+      ansible_host: 172.16.50.21    
+    db1:
+      ansible_host: 172.16.50.19
+            
+
+  children:      #group level
+    webservers:
+      hosts:
+        web1:
+        ubuntu_web2:
+
+    dbservers:
+      hosts:
+        db1:
+
+    allhosts:
+      children:
+        webservers:
+        dbservers:
+      vars:
+        ansible_user: synnefo
+        ansible_ssh_private_key_file: pvtkey

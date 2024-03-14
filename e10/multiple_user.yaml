@@ -1,0 +1,18 @@
+---
+- name: creating users using loop
+  hosts: all
+  become: yes
+  tasks:
+    - name: create user mac, eric, tony
+      user:
+        name: "{{item.name}}"
+        state: present
+        shell: "{{item.shell}}"
+        group: "{{item.groups}}"
+        comment: "{{item.comment}}"
+      loop:
+        - {name: 'user1', groups: 'synnefo', shell: '/bin/sh', comment: 'welcome auser1'}
+        - {name: 'user2', groups: 'synnefo', shell: '/bin/bash', comment: 'welcome auser2'}
+        - {name: 'user3', groups: 'synnefo', shell: '/bin/sh', comment: 'welcome auser3'}
+        - {name: 'user4', groups: 'synnefo', shell: '/bin/bash', comment: 'welcome auser4'}
+

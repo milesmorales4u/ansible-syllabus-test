@@ -1,0 +1,16 @@
+---
+  - name : Permit traffic in default firewall zone
+    become : yes
+    hosts : webservers
+    tasks :
+      - name : Add http service to firewalld
+        firewalld :
+          service : http
+          permanent : true
+          state : enabled 
+        register : f_msg
+
+      - name : print output
+        debug : 
+          #var : f_msg.msg
+            msg : Web traffic http added to firewalld

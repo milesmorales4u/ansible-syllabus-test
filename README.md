@@ -1,2 +1,1 @@
-# ansible-syllabus-test
-Ansible syllabus repository
+# ansible-test-syllabus

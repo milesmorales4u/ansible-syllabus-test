@@ -1,0 +1,43 @@
+---
+- name: installing ntp agent in all server
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install ntp agent in Alma linux
+      yum:
+        name: "{{ item }}"
+        state: present
+      when: ansible_distribution == "AlmaLinux"
+      loop:
+        - chrony
+        - zip
+        - wget
+        - git
+
+    - name: install ntp agent in Ubuntu server
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: no
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - wget
+        - zip
+        - git
+
+    - name: Start service in alma linux
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: start and enable service
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+

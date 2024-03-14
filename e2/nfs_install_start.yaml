@@ -1,0 +1,15 @@
+---
+- name: install nfs service in database server
+  hosts: dbservers
+  become: yes
+  tasks:
+    - name: install nfs package
+      yum:
+        name: nfs-utils
+        state: latest                      #remove - uninstall, absent - ensure not installed
+
+    - name: ensure the nfs service is running
+      service:
+        name: nfs-utils
+        state: started                            #service is running
+        enabled: yes                              #service is enabled

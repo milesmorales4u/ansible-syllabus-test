@@ -1,0 +1,28 @@
+---
+- name: playbook to create the user handler
+  hosts: all
+  become: yes
+  tasks:
+    - name: creating users
+      user:
+        name: "{{username}}"
+        comment: "{{comment}}"
+        create_home: yes
+        shell: "{{shell}}"
+      notify:
+        - create directory
+        - adding file
+
+  handlers:
+    - name: create directory
+      file:
+        state: directory
+        path: "/home/{{ username }}/happydir"
+        owner: "{{username}}"
+
+    - name: adding file
+      file:
+        state: touch
+        path: "/home/{{ username }}/happydir/happyfile.txt"
+        owner: "{{username}}"
+

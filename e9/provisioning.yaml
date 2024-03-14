@@ -1,0 +1,35 @@
+---
+- name: installing ntp agent in all server
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install ntp agent in Alma linux
+      yum:
+        name: chrony
+        state: present
+      when: ansible_distribution == "AlmaLinux"
+      #condition statement, check weather the server is alma, then this task executed
+
+    - name: install ntp agent in Ubuntu server
+      apt:
+        name: ntp
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+      #check os is ubuntu, then execute this task
+
+    - name: Start service in alma linux
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: start and enable service
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+

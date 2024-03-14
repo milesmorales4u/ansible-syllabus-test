@@ -1,0 +1,13 @@
+---
+ - name : web server setup
+   hosts : webservers
+   become : yes
+   tasks : 
+    - name : copy index.html from control node to web server
+      copy :
+        src : /root/e2/index.html
+        dest : /var/www/html
+        owner : apache
+        group : apache
+        mode : '644'
+        backup : yes 

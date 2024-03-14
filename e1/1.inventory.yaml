@@ -1,0 +1,13 @@
+all:
+  hosts:
+    web:
+      ansible_host: 172.16.50.20
+      ansible_user: synnefo
+      ansible_ssh_private_key_file: pvtkey
+    db:
+      ansible_host: 172.16.50.19
+      ansible_user: synnefo
+      ansible_ssh_private_key_file: pvtkey
+
+
+#inventory file cointain multiple hosts

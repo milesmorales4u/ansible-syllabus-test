@@ -1,0 +1,59 @@
+---
+- name: install mariadb server and add user and database using variable
+  hosts: dbservers
+  become: yes
+    #vars:
+    #dbname: database1                         #commenting the data 
+    #dbuser: user1                             #variable already provided outside
+    #dbpass: asd123.
+
+  tasks:
+    - debug:
+      #debug module to print variable with some value
+        msg: "The database name = {dbname}"
+
+    - debug:
+      #only print variable value
+        msg: "{{dbuser}}"
+
+    - name: install mariadb
+      yum:
+        name: mariadb-server
+        state: latest
+
+    - name: install PyMysql
+      yum:
+        name: python3-PyMySQL
+        state: present
+
+    - name: start and enable mariadb server
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - name: create new database with name database1
+      mysql_db:
+        name: "{{dbname}}"
+        state: present
+        login_user: root
+        login_password: ''
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+    - name:
+      mysql_user:
+        name: "{{dbuser}}"
+        password: "{{dbpass}}"
+        host: "%"  # Allow access from any host
+          #priv: "{{dbname}}".*:ALL" 
+        login_user: root
+        login_password: ''
+        login_unix_socket: /var/lib/mysql/mysql.sock  # Adjust the socket path as needed
+
+      #resister module print all the json output in the dbout variable 
+      register: dbout
+
+    - name: print variable using debug module
+      debug:
+      #print the resister module data using dbout module
+        var: dbout

@@ -1,0 +1,6 @@
+---
+- name: installing ntp agent in all server
+  hosts: all
+  become: yes
+  roles:
+    - post-install

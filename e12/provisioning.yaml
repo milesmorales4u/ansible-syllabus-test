@@ -1,0 +1,89 @@
+---
+- name: installing ntp agent in all server
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install ntp agent in Alma linux
+      yum:
+        name: "{{ item }}"
+        state: present
+      when: ansible_distribution == "AlmaLinux"
+      loop:
+        - chrony
+        - zip
+        - git
+
+    - name: install ntp agent in Ubuntu server
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: no
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - zip
+        - git
+
+    - name: Start service in alma linux
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: start and enable service
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+#copy a banner file to server
+    - name: Banner file 
+      copy: 
+        content: '# This server is managed by ansible no manuel change please'
+        dest: /etc/motd
+
+    - name: Deploy ntp agent configuration on ALMA LINUX
+      template:
+        src: template/ntpconf_alma
+        dest: /etc/chrony.conf
+        backup: yes
+      when: ansible_distribution == "AlmaLinux"
+
+#notify module name should be same as the handler name
+      notify:
+        - Chronyd restart
+
+    - name: Deploy ntp agent configuration in UBUNTU
+      template:
+        src: template/ntpconf_ubuntu
+        dest: /etc/ntp.conf
+        backup: yes
+      when: ansible_distribution == "Ubuntu"
+
+      notify:
+        - Ntp restart
+
+#same colunm as the task, handler not executed until they are notified
+
+  handlers:
+    - name: Chronyd restart
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "AlmaLinux"
+
+    - name: Ntp restart
+      service:
+        name: ntp
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+
+
+
+
+

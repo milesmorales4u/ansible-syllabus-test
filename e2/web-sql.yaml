@@ -1,0 +1,29 @@
+---
+- name : Web-server setup
+  hosts : webservers
+  become : yes
+  tasks :
+    - name : install httpd service
+      yum : 
+        name : httpd
+        state : present
+    - name : start service
+      service :
+        name : httpd
+        state : started
+        enabled : yes
+
+- name : dbserver setup
+  hosts : dbservers
+  become : yes
+  tasks:
+    - name : install mariadb server
+      yum :
+        name : mariadb-server
+        state : present
+    - name : start mariadb service
+      service :
+        name : mariadb
+        state : started
+        enabled : yes
+
